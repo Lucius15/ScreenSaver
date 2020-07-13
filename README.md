@@ -1,0 +1,1 @@
+This is screensaver with transparent window, *big arrays of green text*, some easter eggs and sounds. Written on C++ with use of WINAPI.

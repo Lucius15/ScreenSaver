@@ -17,8 +17,8 @@ int 	   Horzres, Vertres;
 void MainEventThread() // События программы
 {
 	Sleep(2000);
-	
-	graphics::GreenTextEvent(hdc, Horzres, Vertres);
+
+	graphics::GreenTextEvent(&hdc, &Horzres, &Vertres);
 	
 	while(true)
 	{
@@ -29,28 +29,23 @@ void MainEventThread() // События программы
 		{
 			case 1:
 			{
-				graphics::NeoEvent(hdc, Horzres, Vertres);
+				graphics::NeoEvent(&hdc, &Horzres, &Vertres);
+
 				break;
 			}
 			case 2:
 			{
-				graphics::RandomLettersEvent(hdc, Horzres, Vertres);
+				graphics::RandomLettersEvent(&hdc, &Horzres, &Vertres);
+
 				break;
 			}
 			default:
 			{
-				graphics::GreenTextEvent(hdc, Horzres, Vertres);
+				graphics::GreenTextEvent(&hdc, &Horzres, &Vertres);
+				
 				break;
 			}
 		}	
-	}
-}
-
-void Sound()
-{
-	while(true)
-	{
-		//PlaySound("Calculating.wav", NULL, SND_FILENAME | SND_LOOP);
 	}
 }
 
@@ -80,7 +75,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		
 		case WM_PAINT:
 		{
-			graphics::InitPaint(hWnd, hdc, paintstruct);
+			graphics::InitPaint(&hWnd, &hdc, &paintstruct);
 			
 			break;
 		}
@@ -124,23 +119,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd, 
 
 	if(!RegisterClass(&WndClass)) return 0;
 	
-	HDC hDCScreen = GetDC(NULL);
-	Horzres = GetDeviceCaps(hDCScreen, HORZRES);
-	Vertres = GetDeviceCaps(hDCScreen, VERTRES);
-	ReleaseDC(NULL, hDCScreen);
-	
 	hWnd = CreateWindow("ScreenSaver", "Calculating...", WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, 0, 0, Horzres, Vertres, NULL, NULL, hInstance, NULL); // Создание окна
 	                   
 	if(!hWnd) return 0;
 	
 	SetWindowLong(hWnd,GWL_STYLE,WS_POPUP);
     SetWindowLong(hWnd,GWL_EXSTYLE,WS_EX_TOPMOST);
+
     SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
 	SetLayeredWindowAttributes(hWnd, 0, 155, LWA_ALPHA);
+
 	ShowWindow(hWnd, SW_SHOWMAXIMIZED);
 	UpdateWindow(hWnd);
 
-	hdc = GetDC(hWnd);								  									   								   
+	hdc = GetDC(hWnd);
+	Horzres = GetDeviceCaps(hdc, HORZRES);
+	Vertres = GetDeviceCaps(hdc, VERTRES);								  									   								   
 
 	while(GetMessage(&msg,0,0,0)) // Цикл обработки сообщений
 	{	

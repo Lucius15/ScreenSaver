@@ -6,14 +6,14 @@
 
 namespace graphics
 {
-	void InitPaint(HWND hWnd, HDC hdc, PAINTSTRUCT paintstruct);
+	void InitPaint(HWND*, HDC*, PAINTSTRUCT*);
 
-	void GreenTextEvent(HDC hdc, int Horzres, int Vertres);
+	void GreenTextEvent(HDC*, int*, int*);
 
-	void NeoEvent(HDC hdc, int Horzres, int Vertres);
-	void RandomLettersEvent(HDC hdc, int Horzres, int Vertres);
+	void NeoEvent(HDC*, int*, int*);
+	void RandomLettersEvent(HDC*, int*, int*);
 
-}
+} // namespace greaphics
 
 
 #endif // NUMBERSSCRENSAVER_GRAPHICS_H

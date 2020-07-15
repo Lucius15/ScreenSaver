@@ -4,21 +4,23 @@
 #include <windows.h>
 #include <time.h>
 
-#include "sources\\graphics\\graphics.h"
-//#include "sources\\sound\\sound.h"
+#include "sources\\ScreenSaverShell\Shell.h"
+#include "sources\\MatrixScreenSaver\\graphics\\graphics.h"
+//#include "sources\\MatrixScreenSaver\\sound\\sound.h"
 
 HWND				   hWnd;
 HDC						hdc;
 HINSTANCE 		  hInstance; 
 PAINTSTRUCT 	paintstruct;
 int 	   Horzres, Vertres;
+int 			*Parameters;
 
 
 void MainEventThread() // Ñמבûעטÿ ןנמדנאללû
 {
 	Sleep(2000);
 
-	graphics::GreenTextEvent(&hdc, &Horzres, &Vertres);
+	graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[2]);
 	
 	while(true)
 	{
@@ -29,19 +31,19 @@ void MainEventThread() // Ñמבûעטÿ ןנמדנאללû
 		{
 			case 1:
 			{
-				graphics::NeoEvent(&hdc, &Horzres, &Vertres);
+				graphics::NeoEvent(&hdc, &Horzres, &Vertres, &Parameters[4]);
 
 				break;
 			}
 			case 2:
 			{
-				graphics::RandomLettersEvent(&hdc, &Horzres, &Vertres);
+				graphics::RandomLettersEvent(&hdc, &Horzres, &Vertres, &Parameters[3], &Parameters[4]);
 
 				break;
 			}
 			default:
 			{
-				graphics::GreenTextEvent(&hdc, &Horzres, &Vertres);
+				graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[2]);
 				
 				break;
 			}
@@ -57,6 +59,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	{
 		case  WM_CREATE:
 		{
+			Parameters = shell::LoadConfig();
+			int Error = shell::CheckConfigValues(Parameters);
+
+			if(Error)
+			{
+				char buf, error_message[100] = {"There's an error in the "};
+				itoa((Error+1), &buf, 10);
+				strcat(error_message, &buf);
+				strcat(error_message, " config.txt line. Please correct it.");
+				MessageBox(hWnd, error_message, 0, 0);
+				PostQuitMessage(0);
+			}
+
 			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainEventThread, 0, 0, 0);
 			//CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainSoundThread, 0, 0, 0);
 			break;                                

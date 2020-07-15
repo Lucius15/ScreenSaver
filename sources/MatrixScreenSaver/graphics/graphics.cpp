@@ -97,7 +97,7 @@ namespace
 	}*/
 	
 		
-	void WriteRandomLettersEverywhere(HDC hdc, int Horzres, int Vertres)
+	void WriteRandomLettersEverywhere(HDC hdc, int Horzres, int Vertres, int WaitTime)
 	{
 		
 		for(int i = 0; i < 5*(Horzres + Vertres); i++)
@@ -115,12 +115,12 @@ namespace
 			symb = (rand() % 255);
 			TextOut(hdc, _rand_x, _rand_y, &symb, 1);
 			
-			//Sleep(1);
+			Sleep(WaitTime);
 		}
 	}
 	
 	
-	void WriteRandomLettersOnError(HDC hdc, int Horzres, int Vertres)
+	void WriteRandomLettersOnError(HDC hdc, int Horzres, int Vertres, int WaitTime)
 	{
 		SetBkColor(hdc, color::Black);
 		
@@ -138,12 +138,12 @@ namespace
 			symb = (rand() % 255);
 			TextOut(hdc, _rand_x, _rand_y, &symb, 1);
 			
-			Sleep(150);
+			Sleep(WaitTime);
 		}
 	}
 	
 	
-	void Restart(HDC hdc, int Horzres, int Vertres) //Перезапуск системы (Зелёное окно + стирание экрана)
+	void Restart(HDC hdc, int Horzres, int Vertres, int WaitTime) //Перезапуск системы (Зелёное окно + стирание экрана)
 	{
 		Sleep(3000);
 		
@@ -163,7 +163,7 @@ namespace
 		
 		Sleep(2000);
 		
-		WriteRandomLettersOnError(hdc, Horzres, Vertres);
+		WriteRandomLettersOnError(hdc, Horzres, Vertres, WaitTime);
 		
 		Sleep(1000);
 		
@@ -192,7 +192,7 @@ namespace graphics
 	}
 
 
-	void GreenTextEvent(HDC *hdc, int *Horzres, int *Vertres)
+	void GreenTextEvent(HDC *hdc, int *Horzres, int *Vertres, int *WaitTimeGreenText)
 	{
 		SetTextColor(*hdc, color::Green);
 		SetBkColor  (*hdc, color::Black);
@@ -208,22 +208,22 @@ namespace graphics
 				symb = (rand() % 255);
 				TextOut(*hdc, j*10, i*10, &symb, 1);
 			}
-			Sleep(5);
+			Sleep(*WaitTimeGreenText);
 		}
 	}
 
 
-	void NeoEvent(HDC *hdc, int *Horzres, int *Vertres)
+	void NeoEvent(HDC *hdc, int *Horzres, int *Vertres, int* WaitTimeRandomLettersOnError)
 	{
 		WriteNeoMessage(*hdc, *Horzres, *Vertres);
-		Restart(*hdc, *Horzres, *Vertres);
+		Restart(*hdc, *Horzres, *Vertres, *WaitTimeRandomLettersOnError);
 	}
 
 
-	void RandomLettersEvent(HDC *hdc, int *Horzres, int *Vertres)
+	void RandomLettersEvent(HDC *hdc, int *Horzres, int *Vertres, int* WaitTimeRandomLettersEverywhere, int* WaitTimeRandomLettersOnError)
 	{
-		WriteRandomLettersEverywhere(*hdc, *Horzres, *Vertres);
-		Restart(*hdc, *Horzres, *Vertres);
+		WriteRandomLettersEverywhere(*hdc, *Horzres, *Vertres, *WaitTimeRandomLettersEverywhere);
+		Restart(*hdc, *Horzres, *Vertres, *WaitTimeRandomLettersOnError);
 	}
 		
 } // namespace graphics

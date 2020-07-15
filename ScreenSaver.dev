@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=000000000000000000000100000
-UnitCount=5
+UnitCount=7
 
 [VersionInfo]
 Major=1
@@ -61,9 +61,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=sources\sound\sound.h
+FileName=sources\MatrixScreenSaver\graphics\graphics.cpp
 CompileCpp=1
-Folder=NumbersScreenSaver
+Folder=ScreenSaver
 Compile=1
 Link=1
 Priority=1000
@@ -71,9 +71,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=sources\sound\sounds.cpp
+FileName=sources\MatrixScreenSaver\graphics\graphics.h
 CompileCpp=1
-Folder=NumbersScreenSaver
+Folder=ScreenSaver
 Compile=1
 Link=1
 Priority=1000
@@ -81,9 +81,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=sources\graphics\graphics.cpp
+FileName=sources\MatrixScreenSaver\sound\sound.h
 CompileCpp=1
-Folder=NumbersScreenSaver
+Folder=ScreenSaver
 Compile=1
 Link=1
 Priority=1000
@@ -91,9 +91,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=sources\graphics\graphics.h
+FileName=sources\MatrixScreenSaver\sound\sounds.cpp
 CompileCpp=1
-Folder=NumbersScreenSaver
+Folder=ScreenSaver
 Compile=1
 Link=1
 Priority=1000
@@ -101,9 +101,19 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=sources\global\global.h
+FileName=sources\ScreenSaverShell\Shell.cpp
 CompileCpp=1
-Folder=NumbersScreenSaver
+Folder=ScreenSaver
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit7]
+FileName=sources\ScreenSaverShell\Shell.h
+CompileCpp=1
+Folder=ScreenSaver
 Compile=1
 Link=1
 Priority=1000

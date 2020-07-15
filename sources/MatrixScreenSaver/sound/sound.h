@@ -1,0 +1,11 @@
+#ifndef SCREENSAVER_MATRIXSCREENSAVER_SOUND_H
+#define SCREENSAVER_MATRIXSCREENSAVER_SOUND_H
+
+#include <windows.h>
+
+namespace sound
+{
+    
+}
+
+#endif // SCREENSAVER_MATRIXSCREENSAVER_SOUND_H

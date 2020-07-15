@@ -1,0 +1,5 @@
+Value is written after ':' and a space. There can't be anything after value.
+ScreenSaver type. 0 is main ScreenSaver (green text and easter eggs), 1 - inf are video names in video folder : 0
+Time between writing green text lines in milliseconds (no fractons allowed) : 5
+Time between writing random letters everywhere in milliseconds (no fractons allowed) : 1
+Time between writing random letters on error window in milliseconds (no fractons allowed) : 150

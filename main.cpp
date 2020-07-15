@@ -20,7 +20,7 @@ void MainEventThread() // Ñמבûעטÿ ןנמדנאללû
 {
 	Sleep(2000);
 
-	graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[2]);
+	graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[3]);
 	
 	while(true)
 	{
@@ -31,19 +31,19 @@ void MainEventThread() // Ñמבûעטÿ ןנמדנאללû
 		{
 			case 1:
 			{
-				graphics::NeoEvent(&hdc, &Horzres, &Vertres, &Parameters[4]);
+				graphics::NeoEvent(&hdc, &Horzres, &Vertres, &Parameters[5]);
 
 				break;
 			}
 			case 2:
 			{
-				graphics::RandomLettersEvent(&hdc, &Horzres, &Vertres, &Parameters[3], &Parameters[4]);
+				graphics::RandomLettersEvent(&hdc, &Horzres, &Vertres, &Parameters[4], &Parameters[5]);
 
 				break;
 			}
 			default:
 			{
-				graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[2]);
+				graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[3]);
 				
 				break;
 			}
@@ -142,7 +142,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd, 
     SetWindowLong(hWnd,GWL_EXSTYLE,WS_EX_TOPMOST);
 
     SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-	SetLayeredWindowAttributes(hWnd, 0, 155, LWA_ALPHA);
+	SetLayeredWindowAttributes(hWnd, 0, Parameters[2], LWA_ALPHA);
 
 	ShowWindow(hWnd, SW_SHOWMAXIMIZED);
 	UpdateWindow(hWnd);

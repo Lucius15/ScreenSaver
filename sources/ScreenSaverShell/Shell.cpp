@@ -63,7 +63,10 @@ namespace shell
                 return 1;*/
         }
 
-        for(int i = 2; i <= 4; i++)
+        if(checking[2] > 255 || checking[2] < 0)
+            return 2;
+
+        for(int i = 3; i <= 5; i++)
             if(checking[i] < 0)
                 return i;
         

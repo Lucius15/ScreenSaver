@@ -3,55 +3,23 @@
 
 #include <windows.h>
 #include <time.h>
+#include <conio.h>
 
-#include "sources\\ScreenSaverShell\Shell.h"
-#include "sources\\MatrixScreenSaver\\graphics\\graphics.h"
-//#include "sources\\MatrixScreenSaver\\sound\\sound.h"
-
-HWND				   hWnd;
-HDC						hdc;
-HINSTANCE 		  hInstance; 
-PAINTSTRUCT 	paintstruct;
-int 	   Horzres, Vertres;
-int 			*Parameters;
+#include "sources\\ScreenSaverShell\shell.h"
+#include "sources\\MatrixScreenSaver\\threads.h"
 
 
-void MainEventThread() // События программы
-{
-	Sleep(2000);
+HWND				  			     hWnd;
+HDC									  hdc;
+HINSTANCE 		  			    hInstance; 
+PAINTSTRUCT 				  paintstruct;
+int 	   				 Horzres, Vertres;
+int 	   		 			  *Parameters;
+bool 		  isScreenSaverActive = false;
+graphics::GraphicsThreadParam ThreadParam;
 
-	graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[3]);
-	
-	while(true)
-	{
-		srand(time(NULL));
-		int chance = rand() % 5;
-		
-		switch(chance)
-		{
-			case 1:
-			{
-				graphics::NeoEvent(&hdc, &Horzres, &Vertres, &Parameters[5]);
 
-				break;
-			}
-			case 2:
-			{
-				graphics::RandomLettersEvent(&hdc, &Horzres, &Vertres, &Parameters[4], &Parameters[5]);
-
-				break;
-			}
-			default:
-			{
-				graphics::GreenTextEvent(&hdc, &Horzres, &Vertres, &Parameters[3]);
-				
-				break;
-			}
-		}	
-	}
-}
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) // Ф-я обработки сообщений от ОС             
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) // Processing system messsges           
 {
 	SetCursorPos(Horzres-15, Vertres-25);
 	
@@ -62,17 +30,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			Parameters = shell::LoadConfig();
 			int Error = shell::CheckConfigValues(Parameters);
 
-			if(Error)
+			if(Error != 0)
 			{
-				char buf, error_message[100] = {"There's an error in the "};
-				itoa((Error+1), &buf, 10);
-				strcat(error_message, &buf);
-				strcat(error_message, " config.txt line. Please correct it.");
-				MessageBox(hWnd, error_message, 0, 0);
+				if(Error == -1)
+				{
+					MessageBox(hWnd, "File config.txt is missing or corrupted!", "Critical error", 0);
+				}
+				else
+				{
+					char buf, error_message[100] = {"There's an error in the "};
+					itoa((Error+1), &buf, 10);
+					strcat(error_message, &buf); 
+					strcat(error_message, " config.txt line. Please, correct it.");
+					MessageBox(hWnd, error_message, "Config error", 0);
+				}
+
 				PostQuitMessage(0);
 			}
 
-			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainEventThread, 0, 0, 0);
+			hdc = GetDC(hWnd);
+			Horzres = GetDeviceCaps(hdc, HORZRES);
+			Vertres = GetDeviceCaps(hdc, VERTRES);
+
+			ThreadParam.hdc = hdc;
+			ThreadParam.Horzres = Horzres;
+			ThreadParam.Vertres = Vertres;
+			ThreadParam.Parameters = Parameters;
+
+			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)thread::GraphicsEventThread, reinterpret_cast<LPVOID>(&ThreadParam), 0, 0);
 			//CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainSoundThread, 0, 0, 0);
 			break;                                
 		}
@@ -84,13 +69,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				EndPaint(hWnd, &paintstruct);
 				PostQuitMessage(0);
 			}
+			else if(wParam == VK_TAB)
+			{
+				EndPaint(hWnd, &paintstruct);
+				system("start ScreenSaver.exe");
+				PostQuitMessage(0);
+			}
 				
 			break;
 		}
 		
 		case WM_PAINT:
 		{
-			graphics::InitPaint(&hWnd, &hdc, &paintstruct);
+			graphics::InitPaint(hWnd, hdc, &paintstruct);
 			
 			break;
 		}
@@ -133,25 +124,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd, 
 			 WndClass.lpszClassName = "ScreenSaver";
 
 	if(!RegisterClass(&WndClass)) return 0;
+
+	shell::CheckForActivity();
 	
-	hWnd = CreateWindow("ScreenSaver", "Calculating...", WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, 0, 0, Horzres, Vertres, NULL, NULL, hInstance, NULL); // Создание окна
+	hWnd = CreateWindow("ScreenSaver", "Calculating...", WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, 0, 0, Horzres, Vertres, NULL, NULL, hInstance, NULL); // Window creation
 	                   
 	if(!hWnd) return 0;
-	
-	SetWindowLong(hWnd,GWL_STYLE,WS_POPUP);
-    SetWindowLong(hWnd,GWL_EXSTYLE,WS_EX_TOPMOST);
+
+	SetWindowLong(hWnd, GWL_STYLE,        WS_POPUP);
+    SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
 
     SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-	SetLayeredWindowAttributes(hWnd, 0, Parameters[2], LWA_ALPHA);
+	SetLayeredWindowAttributes(hWnd, 0, Parameters[3], LWA_ALPHA);
 
 	ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+
 	UpdateWindow(hWnd);
+	SetFocus(hWnd);							  									   								   
 
-	hdc = GetDC(hWnd);
-	Horzres = GetDeviceCaps(hdc, HORZRES);
-	Vertres = GetDeviceCaps(hdc, VERTRES);								  									   								   
-
-	while(GetMessage(&msg,0,0,0)) // Цикл обработки сообщений
+	while(GetMessage(&msg,0,0,0)) // Message processing cycle
 	{	
 		  TranslateMessage(&msg);
 		  DispatchMessage (&msg);

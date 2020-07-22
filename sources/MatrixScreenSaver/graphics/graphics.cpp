@@ -32,7 +32,7 @@ namespace
 	}
 	
 	
-	void WriteNeoMessage(HDC hdc, int Horzres, int Vertres) //Сообщений для Нео
+	void WriteNeoMessage(HDC hdc, int Horzres, int Vertres) // Message to Neo 
 	{
 		SetTextColor(hdc, color::Green);
 		SetBkColor  (hdc, color::Black);
@@ -48,9 +48,10 @@ namespace
 		char MessageToNeo2[22] = {"The Matrix has you..."};
 		char MessageToNeo3[28] = {"Follow the white rabbit."};
 
-		for(int i = 0; i < 16; i++) // Move the 'W' away from 'a' in "Wake"
+		TextOut(hdc, _rand_x + 25, _rand_y + 20, &MessageToNeo1[0], 1);
+		for(int i = 1; i < 16; i++)
 		{
-			TextOut(hdc, _rand_x + 25 + i*14, _rand_y + 20, &MessageToNeo1[i], 1);
+			TextOut(hdc, _rand_x + 30 + i*14, _rand_y + 20, &MessageToNeo1[i], 1);
 
 			Sleep(100);
 		}
@@ -78,7 +79,7 @@ namespace
 	}
 	
 	
-	/*void WriteColorizedText() // Цветной текст
+	/*void WriteColorizedText() // Old colorized text
 	{
 		for(int i = 0; i < Horzres/10; i++)
 		{
@@ -97,7 +98,7 @@ namespace
 	}*/
 	
 		
-	void WriteRandomLettersEverywhere(HDC hdc, int Horzres, int Vertres, int WaitTime)
+	void WriteRandomLettersEverywhere(HDC hdc, int Horzres, int Vertres, int WaitTime) // Colorized text
 	{
 		
 		for(int i = 0; i < 5*(Horzres + Vertres); i++)
@@ -143,7 +144,7 @@ namespace
 	}
 	
 	
-	void Restart(HDC hdc, int Horzres, int Vertres, int WaitTime) //Перезапуск системы (Зелёное окно + стирание экрана)
+	void Restart(HDC hdc, int Horzres, int Vertres, int WaitTime) // System restart
 	{
 		Sleep(3000);
 		
@@ -158,8 +159,6 @@ namespace
 		TextOut(hdc, Horzres/2 - 125, Vertres/2, 	  " ", 							 1);
 		TextOut(hdc, Horzres/2 -  75, Vertres/2, 	  "INITIATING RESTART", 		18);
 		TextOut(hdc, Horzres/2 - 125, Vertres/2, 	  " ", 							 1);
-		
-		//PlaySound("Error.wav", NULL, SND_FILENAME | SND_NOSTOP);
 		
 		Sleep(2000);
 		
@@ -180,50 +179,77 @@ namespace
 namespace graphics
 {
 
-	void InitPaint(HWND *hWnd, HDC *hdc, PAINTSTRUCT *paintstruct)
+	void InitPaint(HWND &hWnd, HDC &hdc, PAINTSTRUCT *paintstruct)
 	{
-		*hdc = BeginPaint(*hWnd, paintstruct);
+		hdc = BeginPaint(hWnd, paintstruct);
 
 		InitHpen();
 		InitHbrush();
 
-		SetTextColor(*hdc, color::Green);
-		SetBkColor  (*hdc, color::Black);
+		SetTextColor(hdc, color::Green);
+		SetBkColor  (hdc, color::Black);
 	}
 
 
-	void GreenTextEvent(HDC *hdc, int *Horzres, int *Vertres, int *WaitTimeGreenText)
+	void StartMessageEvent(HDC &hdc, int &Horzres, int &Vertres)
 	{
-		SetTextColor(*hdc, color::Green);
-		SetBkColor  (*hdc, color::Black);
-		SelectObject(*hdc,     Main_pen);	
-		SelectObject(*hdc,   Main_brush);
-		
-		for(int i = 0; i < *Vertres/10; i++)
-		{
-			for(int j = 0; j < *Horzres/10; j++)
-			{
+		SetTextColor(hdc, color::Green);
+		SetBkColor(hdc, color::Black);
 
-				char symb;
-				symb = (rand() % 255);
-				TextOut(*hdc, j*10, i*10, &symb, 1);
-			}
-			Sleep(*WaitTimeGreenText);
+		char StartMessage2[] = {"start"};
+		char StartMessage3[] = {" Calculating.exe"};
+
+		TextOut(hdc, 0, 0, ">", 1);
+		TextOut(hdc, Horzres, Vertres, " ", 1);
+		Sleep(2000);
+
+		TextOut(hdc, 8, 0, StartMessage2, sizeof(StartMessage2));
+		Sleep(150);
+		
+		TextOut(hdc, 8 + sizeof(StartMessage2)*5, 0, StartMessage3, sizeof(StartMessage3));
+
+		for(int i = 0; i < 5; i++)
+		{
+			TextOut(hdc, 10 + sizeof(StartMessage2)*5 + sizeof(StartMessage3)*6, 0, "_", 1);
+			Sleep(500);
+			TextOut(hdc, 10 + sizeof(StartMessage2)*5 + sizeof(StartMessage3)*6, 0, "  ", 2);
+			Sleep(500);
 		}
 	}
 
 
-	void NeoEvent(HDC *hdc, int *Horzres, int *Vertres, int* WaitTimeRandomLettersOnError)
+	void GreenTextEvent(HDC &hdc, int &Horzres, int &Vertres, int &WaitTimeGreenText)
 	{
-		WriteNeoMessage(*hdc, *Horzres, *Vertres);
-		Restart(*hdc, *Horzres, *Vertres, *WaitTimeRandomLettersOnError);
+		SetTextColor(hdc, color::Green);
+		SetBkColor  (hdc, color::Black);
+		SelectObject(hdc,     Main_pen);	
+		SelectObject(hdc,   Main_brush);
+		
+		for(int i = 0; i < Vertres/10; i++)
+		{
+			for(int j = 0; j < Horzres/10; j++)
+			{
+
+				char symb;
+				symb = (rand() % 255);
+				TextOut(hdc, j*10, i*10, &symb, 1);
+			}
+			Sleep(WaitTimeGreenText);
+		}
 	}
 
 
-	void RandomLettersEvent(HDC *hdc, int *Horzres, int *Vertres, int* WaitTimeRandomLettersEverywhere, int* WaitTimeRandomLettersOnError)
+	void NeoEvent(HDC &hdc, int &Horzres, int &Vertres, int& WaitTimeRandomLettersOnError)
 	{
-		WriteRandomLettersEverywhere(*hdc, *Horzres, *Vertres, *WaitTimeRandomLettersEverywhere);
-		Restart(*hdc, *Horzres, *Vertres, *WaitTimeRandomLettersOnError);
+		WriteNeoMessage(hdc, Horzres, Vertres);
+		Restart(hdc, Horzres, Vertres, WaitTimeRandomLettersOnError);
+	}
+
+
+	void RandomLettersEvent(HDC &hdc, int &Horzres, int &Vertres, int& WaitTimeRandomLettersEverywhere, int& WaitTimeRandomLettersOnError)
+	{
+		WriteRandomLettersEverywhere(hdc, Horzres, Vertres, WaitTimeRandomLettersEverywhere);
+		Restart(hdc, Horzres, Vertres, WaitTimeRandomLettersOnError);
 	}
 		
 } // namespace graphics

@@ -1,0 +1,13 @@
+This is an instruction to ScreenSaver. Please, read carefully.
+To run program, just launch "ScreenSaver.exe".
+To modify values, open "config.txt".
+You have 2 ways to close program:
+1. To close with restart in background, press TAB;
+2. To close without restart, press ESC.
+
+Это инструкция к Скринсейверу. Пожалуйста, читайте внимательно.
+Для запуска программы просто откройте "ScreenSaver.exe".
+Для изменения значений откройте "config.txt".
+У вас есть 2 способа закрыть программу:
+1. Чтобы закрыть окно с перезапуском в фоновый режим, нажмите клавишу TAB;
+2. Чтобы закрыть окно без перезапуска, нажмите клавишу ESC.

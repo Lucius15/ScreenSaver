@@ -3,8 +3,9 @@
 
 namespace shell
 {
-    int* LoadConfig();
+    void CheckForActivity();
 
+    int* LoadConfig();
     int CheckConfigValues(int*);
 
 } // namespace shell
